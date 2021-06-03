@@ -1,0 +1,15 @@
+<div class="input-group">
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="button" (click)="changeProgressValue(-10)">
+        <i class="fa fa-minus"></i>
+      </button>
+    </span>
+    <input type="number" class="form-control" placeholder="Progreso barra" #progressValue [(ngModel)]="progress">
+    <span class="input-group-btn">
+      <button class="btn btn-success" type="button" (click)="changeProgressValue(10)">
+        <i>
+          <i class="fa fa-plus"></i>
+        </i>
+      </button>
+    </span>
+</div>

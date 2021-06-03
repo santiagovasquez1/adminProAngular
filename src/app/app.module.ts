@@ -9,7 +9,7 @@ import { NoPageFountComponent } from './no-page-fount/no-page-fount.component';
 @NgModule({
   declarations: [
     AppComponent,
-    NoPageFountComponent
+    NoPageFountComponent,
   ],
   imports: [
     BrowserModule,
