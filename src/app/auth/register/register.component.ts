@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UsuarioService } from './../../services/usuario.service';
 
@@ -13,7 +14,7 @@ export class RegisterComponent implements OnInit {
   public formSubmitted: boolean = false;
   public registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private usuarioService: UsuarioService) {
+  constructor(private fb: FormBuilder, private usuarioService: UsuarioService, private router: Router) {
 
     this.registerForm = fb.group({
       name: ['Santiago', [Validators.required, Validators.minLength(3)]],
@@ -36,8 +37,7 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.valid) {
       console.log('Posteando form');
       this.usuarioService.crearUsuario(this.registerForm.value).subscribe(result => {
-        console.log('Usuario creado');
-        console.log(result)
+        this.router.navigateByUrl('/');
       }, err => {
         Swal.fire('Error', err.error.msg, 'error');
       });

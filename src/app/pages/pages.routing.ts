@@ -1,3 +1,4 @@
+import { AuthGuard } from './../guards/auth.guard';
 import { PromesasComponent } from './promesas/promesas.component';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { NgModule } from '@angular/core';
@@ -12,6 +13,7 @@ const routes: Routes = [
   {
     path: "dashboard",
     component: PagesComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: "",
