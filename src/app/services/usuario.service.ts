@@ -1,3 +1,4 @@
+import { User } from './../models/user.model';
 import { Router } from '@angular/router';
 import { LoginForm } from './../interfaces/login-form.interface';
 import { Observable, of } from 'rxjs';
@@ -14,6 +15,8 @@ declare const gapi: any;
 export class UsuarioService {
 
   public auth2: any;
+  public user: User;
+
   constructor(private http: HttpClient, private route: Router, private ngZone: NgZone) {
     this.googleInit();
   }
@@ -49,6 +52,7 @@ export class UsuarioService {
     return this.http.get<any>(url, { headers })
       .pipe(
         tap(resp => {
+          this.user = new User(resp.user.name, resp.user.email, '', resp.user.image, resp.user.google, resp.user.role, resp.user.uid);
           localStorage.setItem('token', resp.token);
         }),
         map(resp => true),
@@ -64,6 +68,7 @@ export class UsuarioService {
     return this.http.post<any>(url, params, { headers })
       .pipe(
         tap(resp => {
+
           localStorage.setItem('token', resp.token);
         })
       );
