@@ -14,13 +14,12 @@ export class User {
   ) { }
 
   get imageUrl() {
-
-    if (this.image && !this.image.includes('https')) {
-      return `${environment.base_url}/upload/usuarios/${this.image}`
+    if (!this.image.includes('https') && this.image !== '') {
+      return `${environment.base_url}/upload/users/${this.image}`
     } else if (this.image.includes('https')) {
       return this.image;
     } else {
-      return `${environment.base_url}/upload/usuarios/no-image`;
+      return `${environment.base_url}/upload/users/no-image`;
     }
   }
 }

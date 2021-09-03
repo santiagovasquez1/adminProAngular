@@ -51,11 +51,12 @@ export class UsuarioService {
     });
     return this.http.get<any>(url, { headers })
       .pipe(
-        tap(resp => {
-          this.user = new User(resp.user.name, resp.user.email, '', resp.user.image, resp.user.google, resp.user.role, resp.user.uid);
+        map(resp => {
+          const { name, google, email, role, image = '', uid } = resp.user;
+          this.user = new User(name, email, '', image, google, role, uid);
           localStorage.setItem('token', resp.token);
+          return true;
         }),
-        map(resp => true),
         catchError(error => of(false))
       );
   }
