@@ -1,3 +1,4 @@
+import { User } from './../../models/user.model';
 import { Router } from '@angular/router';
 import { UsuarioService } from './../../services/usuario.service';
 import { Component, OnInit } from '@angular/core';
@@ -10,14 +11,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  public imageUrl: string = ''
-  public userName: string = '';
-  public email: string = '';
+  public usuario: User;
 
   constructor(private userService: UsuarioService, private router: Router) {
-    this.imageUrl = this.userService.user.imageUrl;
-    this.userName = this.userService.user.name;
-    this.email = this.userService.user.email;
+    this.usuario = this.userService.user;
   }
 
   ngOnInit(): void {

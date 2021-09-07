@@ -16,7 +16,7 @@
                         <label for="exampleInputEmail1">Email address</label>
                         <div class="input-group">
                             <div class="input-group-addon"><i class="ti-email"></i></div>
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="email del usuario" formControlName="email">
+                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="email del usuario" formControlName="email" [readOnly]="usuario.google">
                         </div>
                     </div>
                     <button type="submit" [disabled]="perfilForm.invalid" class="btn btn-success btn-block waves-effect waves-light m-r-10">
@@ -32,11 +32,14 @@
             <div class="card-body">
                 <h4 class="card-title">Avatar</h4>
                 <h6 class="card-subtitle">Imagen del usuario</h6>
-                <img src="" alt="">
-                <input type="file">
+                <div class="text-center">
+                    <img *ngIf="!imgTemp" [src]="usuario.imageUrl" class="img-avatar">
+                    <img *ngIf="imgTemp" [src]="imgTemp" class="img-avatar">
+                </div>
+                <input type="file" (change)="cambiarImagen($event.target.files[0])">
                 <br>
                 <br>
-                <button type="button" class="btn btn-success btn-block waves-effect waves-light m-r-10">
+                <button type="button" [disabled]="!imagenSubir" (click)="subirImagen()" class="btn btn-success btn-block waves-effect waves-light m-r-10">
                   <i class="fa fa-save"></i>
                   Cambiar imagen
                 </button>

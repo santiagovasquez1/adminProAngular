@@ -19,3 +19,8 @@
     text-align: center;
     margin-bottom: 10px;
 }
+
+.img-avatar {
+    width: 200px;
+    height: 200px;
+}
