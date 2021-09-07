@@ -7,6 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { catchError, map, tap } from 'rxjs/operators';
+import { PerfilForm } from '../interfaces/perfil-form.interface';
 declare const gapi: any;
 
 @Injectable({
@@ -19,6 +20,14 @@ export class UsuarioService {
 
   constructor(private http: HttpClient, private route: Router, private ngZone: NgZone) {
     this.googleInit();
+  }
+
+  get token(): string {
+    return localStorage.getItem('token') || '';
+  }
+
+  get uid(): string {
+    return this.user.uid || '';
   }
 
   googleInit() {
@@ -43,11 +52,11 @@ export class UsuarioService {
   }
 
   validarToken(): Observable<boolean> {
-    const token = localStorage.getItem('token') || '';
+
     const url = `${environment.base_url}/login/renew`;
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'x-token': token
+      'x-token': this.token
     });
     return this.http.get<any>(url, { headers })
       .pipe(
@@ -73,6 +82,21 @@ export class UsuarioService {
           localStorage.setItem('token', resp.token);
         })
       );
+  }
+
+  actualizarUsuario(formData: PerfilForm): Observable<any> {
+    const url = `${environment.base_url}/users/${this.uid}`;
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-token': this.token
+    });
+
+    let params = {
+      ...formData,
+      role: this.user.role
+    }
+
+    return this.http.put<any>(url, params, { headers });
   }
 
   login(formData: LoginForm): Observable<any> {
