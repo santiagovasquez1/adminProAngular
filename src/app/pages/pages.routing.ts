@@ -1,3 +1,4 @@
+import { UsuariosComponent } from './mantenimientos/usuarios/usuarios.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { AuthGuard } from './../guards/auth.guard';
 import { PromesasComponent } from './promesas/promesas.component';
@@ -63,6 +64,14 @@ const routes: Routes = [
         component: PerfilComponent,
         data: {
           title: "Perfil de usuario"
+        }
+      },
+      //Mantenimientos
+      {
+        path: "usuarios",
+        component: UsuariosComponent,
+        data: {
+          title: "Usuarios de la aplicación"
         }
       }
     ]

@@ -1,3 +1,4 @@
+import { cargarUsuarios } from './../interfaces/cargar-usuarios.interfaces';
 import { User } from './../models/user.model';
 import { Router } from '@angular/router';
 import { LoginForm } from './../interfaces/login-form.interface';
@@ -28,6 +29,13 @@ export class UsuarioService {
 
   get uid(): string {
     return this.user.uid || '';
+  }
+
+  get headers(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-token': this.token
+    });
   }
 
   googleInit() {
@@ -122,6 +130,23 @@ export class UsuarioService {
           localStorage.setItem('token', resp.token);
         })
       );
+  }
+
+  cargarUsuarios(from: number = 0) {
+
+    const url = `${environment.base_url}/users?from=${from}`;
+
+    return this.http.get<cargarUsuarios>(url, { headers: this.headers })
+      .pipe(
+        map(resp => {
+          const users = resp.users.map(user => new User(user.name, user.email, '', user.image, user.google, user.role, user.uid));
+          return {
+            total: resp.total,
+            users
+          };
+        })
+      );
+
   }
 
 }
