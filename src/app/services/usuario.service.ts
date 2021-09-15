@@ -7,7 +7,7 @@ import { RegisterForm } from './../interfaces/register-form.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, delay, map, tap } from 'rxjs/operators';
 import { PerfilForm } from '../interfaces/perfil-form.interface';
 declare const gapi: any;
 
@@ -92,20 +92,21 @@ export class UsuarioService {
       );
   }
 
-  actualizarUsuario(formData: PerfilForm): Observable<any> {
+  actualizarPerfil(data: { email: string, name: string, role: string }): Observable<any> {
     const url = `${environment.base_url}/users/${this.uid}`;
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-token': this.token
-    });
-
-    let params = {
-      ...formData,
-      role: this.user.role
+    data = {
+      ...data,
+      role: this.user.role,
     }
-
-    return this.http.put<any>(url, params, { headers });
+    return this.http.put<any>(url, data, { headers: this.headers });
   }
+
+
+  actualizaUsuario(usuario: User): Observable<any> {
+    const url = `${environment.base_url}/users/${usuario.uid}`;
+    return this.http.put<any>(url, usuario, { headers: this.headers });
+  }
+
 
   login(formData: LoginForm): Observable<any> {
     const url = `${environment.base_url}/login`;
@@ -138,6 +139,7 @@ export class UsuarioService {
 
     return this.http.get<cargarUsuarios>(url, { headers: this.headers })
       .pipe(
+        delay(100),
         map(resp => {
           const users = resp.users.map(user => new User(user.name, user.email, '', user.image, user.google, user.role, user.uid));
           return {
@@ -147,6 +149,11 @@ export class UsuarioService {
         })
       );
 
+  }
+
+  eliminarUsuario(usuario: User) {
+    const url = `${environment.base_url}/users/${usuario.uid}`;
+    return this.http.delete(url, { headers: this.headers });
   }
 
 }

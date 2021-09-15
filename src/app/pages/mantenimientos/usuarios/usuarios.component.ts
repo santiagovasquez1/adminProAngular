@@ -1,6 +1,9 @@
-import { User } from './../../../models/user.model';
-import { UsuarioService } from './../../../services/usuario.service';
 import { Component, OnInit } from '@angular/core';
+import Swal from 'sweetalert2';
+import { User } from './../../../models/user.model';
+import { BusquedasService } from './../../../services/busquedas.service';
+import { ModalImagenService } from './../../../services/modal-imagen.service';
+import { UsuarioService } from './../../../services/usuario.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -12,9 +15,12 @@ export class UsuariosComponent implements OnInit {
   public totalUsers: number = 0;
   public from: number = 0;
   public users: User[];
+  public usersTemp: User[];
+  public cargando: boolean = true;
 
-  constructor(private userService: UsuarioService) {
+  constructor(private userService: UsuarioService, private busquedasService: BusquedasService, private modalImagenService: ModalImagenService) {
     this.users = [];
+    this.usersTemp = [];
   }
 
   ngOnInit(): void {
@@ -22,11 +28,14 @@ export class UsuariosComponent implements OnInit {
   }
 
   cargarUsuarios() {
+    this.cargando = true;
     this.userService.cargarUsuarios(this.from).subscribe(({ total, users }) => {
       this.totalUsers = total;
       this.users = users;
+      this.usersTemp = users;
+      this.cargando = false;
     }, err => {
-      console.log(err)
+      Swal.fire('Error', err.error.msg, 'error');
     });
   }
 
@@ -42,4 +51,60 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios();
   }
 
+  buscar(termino: string) {
+
+    if (termino.length === 0) {
+      return this.users = this.usersTemp;
+    } else {
+      this.busquedasService.buscar('usuarios', termino).subscribe(result => {
+        this.users = result.map(user => {
+          return new User(user.name, user.email, '', user.image, user.google, user.role, user.uid)
+        });
+      }, err => {
+        Swal.fire('Error', err.error.msg, 'error');
+      });
+    }
+  }
+
+  eliminarUsuario(usuario: User) {
+
+    if (usuario.uid === this.userService.uid) {
+      return Swal.fire('Error', 'No se puede eliminar a usted mismo', 'error');
+    }
+
+    Swal.fire({
+      title: '¿Borrar usuario?',
+      text: `Esta a punto de eliminar a ${usuario.name}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Eliminalo!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.eliminarUsuario(usuario).subscribe(result => {
+          this.cargarUsuarios();
+          Swal.fire(
+            'Usuario eliminado!',
+            `${usuario.name} fue eliminado`,
+            'success'
+          );
+
+
+        });
+      }
+    })
+  }
+
+  cambiarRol(user: User) {
+    this.userService.actualizaUsuario(user).subscribe(resp => {
+    }, err => {
+      Swal.fire('Error', err.error.msg, 'error');
+    })
+  }
+
+  cargarImagen(user:User) {
+    this.modalImagenService.abrirModal();
+  }
 }
