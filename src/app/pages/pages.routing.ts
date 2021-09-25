@@ -1,3 +1,5 @@
+import { MedicosComponent } from './mantenimientos/medicos/medicos.component';
+import { HospitalesComponent } from './mantenimientos/hospitales/hospitales.component';
 import { UsuariosComponent } from './mantenimientos/usuarios/usuarios.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { AuthGuard } from './../guards/auth.guard';
@@ -72,6 +74,20 @@ const routes: Routes = [
         component: UsuariosComponent,
         data: {
           title: "Usuarios de la aplicación"
+        }
+      },
+      {
+        path: "hospitales",
+        component: HospitalesComponent,
+        data: {
+          title: "Hospitales de la aplicación"
+        }
+      },
+      {
+        path: "medicos",
+        component: MedicosComponent,
+        data: {
+          title: "Medicos de la aplicación"
         }
       }
     ]
