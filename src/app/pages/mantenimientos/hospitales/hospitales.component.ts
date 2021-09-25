@@ -5,6 +5,7 @@ import { Hospital } from './../../../models/hospital.model';
 import { HospitalService } from './../../../services/hospital.service';
 import { Component, OnInit } from '@angular/core';
 import { delay } from 'rxjs/operators';
+import { BusquedasService } from 'src/app/services/busquedas.service';
 
 @Component({
   selector: 'app-hospitales',
@@ -14,9 +15,11 @@ import { delay } from 'rxjs/operators';
 })
 export class HospitalesComponent implements OnInit {
   public hospitales: Hospital[] = [];
+  public hospitalesTemp: Hospital[] = [];
   public cargando: boolean = true;
   public imgSubs: Subscription;
-  constructor(private hospitalService: HospitalService,private modalImagenService:ModalImagenService) { }
+
+  constructor(private hospitalService: HospitalService, private modalImagenService: ModalImagenService, private busquedasService: BusquedasService) { }
 
   ngOnInit(): void {
 
@@ -33,6 +36,7 @@ export class HospitalesComponent implements OnInit {
 
     this.hospitalService.getHospitales().subscribe(hospitales => {
       this.hospitales = hospitales;
+      this.hospitalesTemp = hospitales;
       this.cargando = false;
     }, error => {
       console.log(error);
@@ -59,7 +63,7 @@ export class HospitalesComponent implements OnInit {
   }
 
   async abrirSwalModal() {
-    const { value } = await Swal.fire<string>({
+    const { value = '' } = await Swal.fire<string>({
       title: 'Creacion de Hospital',
       input: 'text',
       inputLabel: 'Nombre del hospital',
@@ -68,7 +72,6 @@ export class HospitalesComponent implements OnInit {
     });
 
     if (value.trim().length > 0) {
-
       this.hospitalService.crearHospital(value).subscribe((result: any) => {
         this.hospitales.push(result.hospital);
       }, error => {
@@ -78,7 +81,21 @@ export class HospitalesComponent implements OnInit {
 
   }
 
-  cargarImagen(hospital: Hospital) {
+  public cargarImagen(hospital: Hospital) {
     this.modalImagenService.abrirModal('hospitales', hospital._id, hospital.image);
+  }
+
+  public buscarHospital(termino: string) {
+    if (termino.length === 0) {
+      return this.hospitales = this.hospitalesTemp;
+    } else {
+      this.busquedasService.buscar('hospitales', termino).subscribe(result => {
+        this.hospitales = result.map(hospital => {
+          return new Hospital(hospital.name, hospital._id, hospital.image);
+        });
+      }, err => {
+        Swal.fire('Error', err.error.msg, 'error');
+      });
+    }
   }
 }

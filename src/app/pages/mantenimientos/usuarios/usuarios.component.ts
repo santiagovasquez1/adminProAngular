@@ -101,8 +101,6 @@ export class UsuariosComponent implements OnInit, OnDestroy {
             `${usuario.name} fue eliminado`,
             'success'
           );
-
-
         });
       }
     })

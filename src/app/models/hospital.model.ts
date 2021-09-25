@@ -1,8 +1,5 @@
-interface _hospitalUser {
-  _id: string,
-  name: string,
-  image: string,
-}
+import { TableUser } from './../interfaces/tableUser.interfaces';
+
 
 export class Hospital {
 
@@ -10,6 +7,6 @@ export class Hospital {
     public name: string,
     public _id?: string,
     public image?: string,
-    public usuario?: _hospitalUser
+    public usuario?: TableUser
   ) { }
 }
